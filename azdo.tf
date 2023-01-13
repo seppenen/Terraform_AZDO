@@ -16,14 +16,14 @@ resource "azuredevops_git_repository" "repo" {
   initialization {
     init_type             = "Import"
     source_type           = "Git"
-    source_url            = "https://yamls@dev.azure.com/yamls/test/_git/test"
-    service_connection_id = azuredevops_serviceendpoint_generic_git.serviceendpoint.id
+    source_url            = "https://ext-lib-0928@dev.azure.com/ext-lib-0928/ext-lib-0928/_git/ext-lib-0928"
+    service_connection_id = azuredevops_serviceendpoint_generic_git.service_endpoint.id
   }
 }
 
-resource "azuredevops_serviceendpoint_generic_git" "serviceendpoint" {
+resource "azuredevops_serviceendpoint_generic_git" "service_endpoint" {
   project_id            = azuredevops_project.this.id
-  repository_url        = "https://yamls@dev.azure.com/yamls/test/_git/test"
+  repository_url        = "https://ext-lib-0928@dev.azure.com/ext-lib-0928/ext-lib-0928/_git/ext-lib-0928"
   username              = var.ado_repo_username
   password              = var.ado_repo_password
   service_endpoint_name = local.az_lib_service_endpoint
