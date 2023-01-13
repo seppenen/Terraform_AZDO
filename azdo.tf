@@ -39,7 +39,7 @@ resource "azuredevops_build_definition" "master" {
   repository {
     repo_type   = "TfsGit"
     repo_id     = azuredevops_git_repository.repo.id
-    branch_name = "Master"
+    branch_name = "master"
     yml_path    = "azure-pipeline-main.yml"
   }
 }
@@ -55,7 +55,7 @@ resource "azuredevops_build_definition" "feature" {
   repository {
     repo_type   = "TfsGit"
     repo_id     = azuredevops_git_repository.repo.id
-    branch_name = "Feature"
+    branch_name = "feature"
     yml_path    = "azure-pipeline-feature.yml"
   }
 }
