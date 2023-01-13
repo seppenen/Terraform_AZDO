@@ -10,11 +10,6 @@ terraform {
       version = "0.3.0"
     }
 
-    restapi = {
-      source = "eiqops/restapi"
-      version = "1.15.1"
-    }
-
     azurerm = {
       source  = "hashicorp/azurerm"
       version = ">=1.32.0"
