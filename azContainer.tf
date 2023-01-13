@@ -13,7 +13,7 @@ resource "azurerm_container_registry" "acr" {
 
 # Output admin password
 output "acr_admin_password" {
-  value = azurerm_container_registry.acr.admin_password
+  value     = azurerm_container_registry.acr.admin_password
   sensitive = true
 }
 

@@ -1,35 +1,38 @@
 
 provider "azuredevops" {
-  org_service_url = var.ado_org_service_url
+  org_service_url       = var.ado_org_service_url
+  personal_access_token = var.ado_personal_access_token
 
 }
 
 resource "azuredevops_project" "this" {
-  name       = "Project"
-  visibility = "private"
+  name               = "Project"
+  visibility         = "private"
+  work_item_template = "Agile"
 }
 
+resource "azuredevops_serviceendpoint_generic_git" "serviceendpoint" {
+  project_id            = azuredevops_project.this.id
+  repository_url        = "https://yamls@dev.azure.com/yamls/test/_git/test"
+  username              = var.ado_repo_username
+  password              = var.ado_repo_password
+  service_endpoint_name = "Repository library"
+  description           = "This service endpoint is used to access the repository library"
+}
 
 resource "azuredevops_git_repository" "example" {
   project_id     = azuredevops_project.this.id
   name           = "testRepo"
-  default_branch = "refs/heads/master"
+  default_branch = "refs/heads/Master"
   initialization {
-    init_type = "Clean"
+    init_type             = "Import"
+    source_type           = "Git"
+    source_url            = "https://yamls@dev.azure.com/yamls/test/_git/test"
+    service_connection_id = azuredevops_serviceendpoint_generic_git.serviceendpoint.id
   }
 }
 
-resource "azuredevops_git_repository_file" "main" {
-  repository_id       = azuredevops_git_repository.example.id
-  file                = "azure-pipeline-main.yml"
-  content             = file("azure-pipeline-main.yml")
-  branch              = "refs/heads/master"
-  commit_message      = "First commit"
-  overwrite_on_create = false
-}
-
-
-resource "azuredevops_build_definition" "pipeline_1" {
+resource "azuredevops_build_definition" "master" {
 
   project_id = azuredevops_project.this.id
   name       = "Master"
@@ -41,10 +44,26 @@ resource "azuredevops_build_definition" "pipeline_1" {
   repository {
     repo_type   = "TfsGit"
     repo_id     = azuredevops_git_repository.example.id
-    branch_name = azuredevops_git_repository.example.default_branch
+    branch_name = "Master"
     yml_path    = "azure-pipeline-main.yml"
   }
+}
 
+resource "azuredevops_build_definition" "feature" {
+
+  project_id = azuredevops_project.this.id
+  name       = "Feature"
+
+  ci_trigger {
+    use_yaml = true
+  }
+
+  repository {
+    repo_type   = "TfsGit"
+    repo_id     = azuredevops_git_repository.example.id
+    branch_name = "Feature"
+    yml_path    = "azure-pipeline-feature.yml"
+  }
 }
 
 resource "azuredevops_variable_group" "variable-group" {
@@ -59,7 +78,7 @@ resource "azuredevops_variable_group" "variable-group" {
   }
 
   variable {
-    name = "repository_name"
+    name  = "repository_name"
     value = azurerm_container_registry.acr.name
   }
 
@@ -72,6 +91,7 @@ resource "azuredevops_serviceendpoint_dockerregistry" "container_registry" {
   docker_username       = azurerm_container_registry.acr.admin_username
   docker_password       = azurerm_container_registry.acr.admin_password
   registry_type         = "Others"
+  description = "This service endpoint is used to access the container registry"
 }
 
 resource "azuredevops_resource_authorization" "kv_auth" {
