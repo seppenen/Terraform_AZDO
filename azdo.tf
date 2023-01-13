@@ -12,7 +12,6 @@ resource "azuredevops_project" "this" {
 resource "azuredevops_git_repository" "repo" {
   project_id     = azuredevops_project.this.id
   name           = local.ado_repository_name
-  default_branch = "refs/heads/Master"
   initialization {
     init_type             = "Import"
     source_type           = "Git"
@@ -33,7 +32,6 @@ resource "azuredevops_serviceendpoint_generic_git" "service_endpoint" {
 resource "azuredevops_build_definition" "master" {
   project_id = azuredevops_project.this.id
   name       = "Master"
-
   ci_trigger {
     use_yaml = true
   }
