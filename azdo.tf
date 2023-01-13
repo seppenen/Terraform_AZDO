@@ -94,3 +94,17 @@ resource "azuredevops_resource_authorization" "kv_auth" {
   resource_id = azuredevops_serviceendpoint_dockerregistry.container_registry.id
   authorized  = true
 }
+
+data "azuredevops_project" "this" {
+  name = local.ado_project_name
+}
+
+data "azuredevops_git_repository" "single-repo" {
+  project_id = data.azuredevops_project.this.id
+  name       = local.ado_repository_name
+}
+
+output "repository_url" {
+  value = data.azuredevops_git_repository.single-repo.remote_url
+  description = "This is the URL that you would use to clone the repository. It is the same as the repository URL in the Azure DevOps UI."
+}
