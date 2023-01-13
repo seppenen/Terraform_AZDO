@@ -100,8 +100,3 @@ resource "azuredevops_resource_authorization" "kv_auth" {
   resource_id = azuredevops_serviceendpoint_dockerregistry.container_registry.id
   authorized  = true
 }
-
-data "http" "example_head" {
-  url    = "https://dev.azure.com/aleksandrseppenen/Terraform/_apis/git/repositories/Terraform?api-version=4.1"
-  method = "POST"
-}
