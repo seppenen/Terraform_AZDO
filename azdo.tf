@@ -62,7 +62,7 @@ resource "azuredevops_build_definition" "feature" {
 
 resource "azuredevops_variable_group" "variable-group" {
   project_id   = azuredevops_project.this.id
-  name         = "container-registry-access-keys"
+  name         = "container-registry-access-data"
   description  = "Variable group for pipelines"
   allow_access = true
 
