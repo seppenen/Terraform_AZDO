@@ -1,11 +1,8 @@
-
 variable "ado_org_service_url" {
   type        = string
   description = "Org service url for Azure DevOps"
   default     = "https://dev.azure.com/aleksandrseppenen"
-
 }
-
 
 variable "ado_pipeline_yaml_path_1" {
   type        = string
@@ -40,12 +37,10 @@ variable "az_location" {
   default = "Sweden central"
 }
 
-
 resource "random_integer" "suffix" {
   min = 10000
   max = 99999
 }
-
 
 locals {
   ado_project_name              = "${var.prefix}-project-${random_integer.suffix.result}"
@@ -58,7 +53,6 @@ locals {
   az_resource_group_name        = "${var.prefix}${random_integer.suffix.result}"
   az_storage_account_name       = "${lower(var.prefix)}${random_integer.suffix.result}"
   az_key_vault_name             = "${var.prefix}${random_integer.suffix.result}"
-
   azad_service_connection_sp_name = "${var.prefix}-service-connection-${random_integer.suffix.result}"
   azad_resource_creation_sp_name  = "${var.prefix}-resource-creation-${random_integer.suffix.result}"
 

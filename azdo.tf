@@ -1,17 +1,13 @@
-
 provider "azuredevops" {
   org_service_url       = var.ado_org_service_url
   personal_access_token = var.ado_personal_access_token
-
 }
-
 
 resource "azuredevops_project" "this" {
   name               = local.ado_project_name
   visibility         = local.ado_project_visibility
   work_item_template = "Agile"
 }
-
 
 resource "azuredevops_git_repository" "repo" {
   project_id     = azuredevops_project.this.id
@@ -51,7 +47,6 @@ resource "azuredevops_build_definition" "master" {
 }
 
 resource "azuredevops_build_definition" "feature" {
-
   project_id = azuredevops_project.this.id
   name       = "Feature"
 
@@ -82,7 +77,6 @@ resource "azuredevops_variable_group" "variable-group" {
     name  = "repository_name"
     value = azurerm_container_registry.acr.name
   }
-
 }
 
 resource "azuredevops_serviceendpoint_dockerregistry" "container_registry" {
