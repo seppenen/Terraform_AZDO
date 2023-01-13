@@ -95,12 +95,8 @@ resource "azuredevops_resource_authorization" "kv_auth" {
   authorized  = true
 }
 
-data "azuredevops_project" "this" {
-  name = local.ado_project_name
-}
-
 data "azuredevops_git_repository" "single-repo" {
-  project_id = data.azuredevops_project.this.id
+  project_id = azuredevops_project.this.id
   name       = local.ado_repository_name
 }
 
