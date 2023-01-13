@@ -44,15 +44,11 @@ resource "random_integer" "suffix" {
 
 locals {
   ado_project_name              = "${var.prefix}-project-${random_integer.suffix.result}"
-  ado_repository_name           = "${var.prefix}-repository-${random_integer.suffix.result}"
+  ado_repository_name           = "${var.prefix}-pipeline-${random_integer.suffix.result}"
   ado_project_description       = "Project for ${var.prefix}"
   ado_project_visibility        = "private"
   az_container_name             = "${var.prefix}Container${random_integer.suffix.result}"
   az_container_service_endpoint = "AZ Container Registry"
   az_lib_service_endpoint       = "Ext-lib-0928"
   az_resource_group_name        = "${var.prefix}${random_integer.suffix.result}"
-  az_storage_account_name       = "${lower(var.prefix)}${random_integer.suffix.result}"
-  az_key_vault_name             = "${var.prefix}${random_integer.suffix.result}"
-  azad_service_connection_sp_name = "${var.prefix}-service-connection-${random_integer.suffix.result}"
-  azad_resource_creation_sp_name  = "${var.prefix}-resource-creation-${random_integer.suffix.result}"
 }
