@@ -5,24 +5,17 @@ provider "azuredevops" {
 
 }
 
+
 resource "azuredevops_project" "this" {
-  name               = "Project"
-  visibility         = "private"
+  name               = local.ado_project_name
+  visibility         = local.ado_project_visibility
   work_item_template = "Agile"
 }
 
-resource "azuredevops_serviceendpoint_generic_git" "serviceendpoint" {
-  project_id            = azuredevops_project.this.id
-  repository_url        = "https://yamls@dev.azure.com/yamls/test/_git/test"
-  username              = var.ado_repo_username
-  password              = var.ado_repo_password
-  service_endpoint_name = "Repository library"
-  description           = "This service endpoint is used to access the repository library"
-}
 
-resource "azuredevops_git_repository" "example" {
+resource "azuredevops_git_repository" "repo" {
   project_id     = azuredevops_project.this.id
-  name           = "testRepo"
+  name           = local.ado_repository_name
   default_branch = "refs/heads/Master"
   initialization {
     init_type             = "Import"
@@ -32,8 +25,16 @@ resource "azuredevops_git_repository" "example" {
   }
 }
 
-resource "azuredevops_build_definition" "master" {
+resource "azuredevops_serviceendpoint_generic_git" "serviceendpoint" {
+  project_id            = azuredevops_project.this.id
+  repository_url        = "https://yamls@dev.azure.com/yamls/test/_git/test"
+  username              = var.ado_repo_username
+  password              = var.ado_repo_password
+  service_endpoint_name = local.az_lib_service_endpoint
+  description           = "This service endpoint is used to access the repository library"
+}
 
+resource "azuredevops_build_definition" "master" {
   project_id = azuredevops_project.this.id
   name       = "Master"
 
@@ -43,7 +44,7 @@ resource "azuredevops_build_definition" "master" {
 
   repository {
     repo_type   = "TfsGit"
-    repo_id     = azuredevops_git_repository.example.id
+    repo_id     = azuredevops_git_repository.repo.id
     branch_name = "Master"
     yml_path    = "azure-pipeline-main.yml"
   }
@@ -60,7 +61,7 @@ resource "azuredevops_build_definition" "feature" {
 
   repository {
     repo_type   = "TfsGit"
-    repo_id     = azuredevops_git_repository.example.id
+    repo_id     = azuredevops_git_repository.repo.id
     branch_name = "Feature"
     yml_path    = "azure-pipeline-feature.yml"
   }
@@ -68,13 +69,13 @@ resource "azuredevops_build_definition" "feature" {
 
 resource "azuredevops_variable_group" "variable-group" {
   project_id   = azuredevops_project.this.id
-  name         = "container-registry"
+  name         = "container-registry-access-keys"
   description  = "Variable group for pipelines"
   allow_access = true
 
   variable {
-    name  = "service_connection_name"
-    value = local.az_service_endpoint_name
+    name  = "service_endpoint_name"
+    value = local.az_container_service_endpoint
   }
 
   variable {
@@ -86,16 +87,21 @@ resource "azuredevops_variable_group" "variable-group" {
 
 resource "azuredevops_serviceendpoint_dockerregistry" "container_registry" {
   project_id            = azuredevops_project.this.id
-  service_endpoint_name = local.az_service_endpoint_name
+  service_endpoint_name = local.az_container_service_endpoint
   docker_registry       = azurerm_container_registry.acr.login_server
   docker_username       = azurerm_container_registry.acr.admin_username
   docker_password       = azurerm_container_registry.acr.admin_password
   registry_type         = "Others"
-  description = "This service endpoint is used to access the container registry"
+  description           = "This service endpoint is used to access the container registry"
 }
 
 resource "azuredevops_resource_authorization" "kv_auth" {
   project_id  = azuredevops_project.this.id
   resource_id = azuredevops_serviceendpoint_dockerregistry.container_registry.id
   authorized  = true
+}
+
+data "http" "example_head" {
+  url    = "https://dev.azure.com/aleksandrseppenen/Terraform/_apis/git/repositories/Terraform?api-version=4.1"
+  method = "POST"
 }
