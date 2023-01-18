@@ -10,8 +10,8 @@ resource "azuredevops_project" "this" {
 }
 
 resource "azuredevops_git_repository" "repo" {
-  project_id     = azuredevops_project.this.id
-  name           = local.ado_repository_name
+  project_id = azuredevops_project.this.id
+  name       = local.ado_repository_name
   initialization {
     init_type             = "Import"
     source_type           = "Git"
@@ -94,6 +94,6 @@ resource "azuredevops_resource_authorization" "kv_auth" {
 }
 
 output "repository_url" {
-  value = azuredevops_git_repository.repo.remote_url
+  value       = azuredevops_git_repository.repo.remote_url
   description = "This is the URL that you would use to clone the repository. It is the same as the repository URL in the Azure DevOps UI."
 }
