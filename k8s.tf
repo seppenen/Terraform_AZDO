@@ -59,7 +59,7 @@ resource "kubernetes_deployment" "example" {
           }
           env {
             name  = "SONAR_JDBC_URL"
-            value = "jdbc:postgresql://postgres-container-app.orangemushroom-6c3f7727.northeurope.azurecontainerapps.io:5432/postgres"
+            value = "jdbc:postgresql://${jsondecode(data.azapi_resource.postgres.output).properties.latestRevisionFqdn}:5432/postgres"
           }
         }
 
