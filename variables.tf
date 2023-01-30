@@ -34,7 +34,7 @@ variable "prefix" {
 
 variable "az_location" {
   type    = string
-  default = "Sweden central"
+  default = "northeurope"
 }
 
 resource "random_integer" "suffix" {
@@ -57,14 +57,19 @@ locals {
   ado_repository_name           = "${var.prefix}-pipeline-${random_integer.suffix.result}"
   ado_project_description       = "Project for ${var.prefix}"
   ado_project_visibility        = "private"
-  az_container_name             = "${var.prefix}Container${random_integer.suffix.result}"
-  az_cluster_name               = "${var.prefix}-Cluster-${random_integer.suffix.result}"
+  az_container_name             = "${var.prefix}container${random_integer.suffix.result}"
+  az-container_app_name         = "${var.prefix}-container-env-${random_integer.suffix.result}"
+  az_log_analytics_name         = "${var.prefix}-log-analytics-${random_integer.suffix.result}"
+  az_vnet_name                  = "${var.prefix}-vnet-${random_integer.suffix.result}"
+  az_subnet_name                = "${var.prefix}-subnet-${random_integer.suffix.result}"
   az_container_service_endpoint = "AZ Container Registry"
   az_lib_service_endpoint       = "Ext-lib-0928"
+  az_cluster_name               = "${var.prefix}-Cluster-${random_integer.suffix.result}"
   az_resource_group_name        = "${var.prefix}-${random_integer.suffix.result}"
   host                          = azurerm_kubernetes_cluster.this.kube_config.0.host
   client_key                    = base64decode(azurerm_kubernetes_cluster.this.kube_config.0.client_key)
   client_certificate            = base64decode(azurerm_kubernetes_cluster.this.kube_config.0.client_certificate)
   cluster_ca_certificate        = base64decode(azurerm_kubernetes_cluster.this.kube_config.0.cluster_ca_certificate)
   kube_config                   = azurerm_kubernetes_cluster.this.kube_config_raw
+
 }

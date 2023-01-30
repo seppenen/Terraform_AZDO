@@ -2,6 +2,9 @@ provider "azurerm" {
   features {}
 }
 
+provider "azapi" {
+}
+
 terraform {
   required_providers {
     azuredevops = {
@@ -10,15 +13,22 @@ terraform {
     }
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = ">=1.32.0"
+      version = ">=3.41.0"
+    }
+    sonarqube = {
+      source = "jdamata/sonarqube"
     }
     azuread = {
       source  = "hashicorp/azuread"
       version = "2.6.0"
     }
+    azapi = {
+      source  = "Azure/azapi"
+      version = "1.2.0"
+    }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = ">= 2.0.0"
+      version = ">= 2.17.0"
     }
   }
 }

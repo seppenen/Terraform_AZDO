@@ -62,7 +62,7 @@ resource "azuredevops_build_definition" "feature" {
 
 resource "azuredevops_variable_group" "variable-group" {
   project_id   = azuredevops_project.this.id
-  name         = "container-registry-access-data"
+  name         = "container-registry-data"
   description  = "Variable group for pipelines"
   allow_access = true
 
@@ -74,6 +74,11 @@ resource "azuredevops_variable_group" "variable-group" {
   variable {
     name  = "repository_name"
     value = azurerm_container_registry.acr.name
+  }
+
+  variable {
+    name  = "postgresRevisionFqdn"
+    value = jsondecode(data.azapi_resource.postgres.output).properties.latestRevisionFqdn
   }
 }
 

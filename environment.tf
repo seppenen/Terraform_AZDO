@@ -3,6 +3,29 @@ resource "azurerm_resource_group" "this" {
   location = var.az_location
 }
 
+resource "azurerm_log_analytics_workspace" "env" {
+  name                = local.az_log_analytics_name
+  location            = azurerm_resource_group.this.location
+  resource_group_name = azurerm_resource_group.this.name
+  sku                 = "PerGB2018"
+  retention_in_days   = 30
+}
+
+resource "azurerm_virtual_network" "network" {
+  name                = local.az_vnet_name
+  address_space       = ["10.0.0.0/16"]
+  location            = "northeurope"
+  resource_group_name = azurerm_resource_group.this.name
+}
+
+resource "azurerm_subnet" "subnet" {
+  name                 = local.az_subnet_name
+  resource_group_name  = azurerm_resource_group.this.name
+  virtual_network_name = azurerm_virtual_network.network.name
+  address_prefixes     = ["10.0.0.0/23"]
+
+}
+
 resource "azurerm_container_registry" "acr" {
   name                = local.az_container_name
   resource_group_name = azurerm_resource_group.this.name
