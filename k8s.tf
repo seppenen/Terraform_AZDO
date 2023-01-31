@@ -6,80 +6,82 @@ provider "kubernetes" {
   cluster_ca_certificate = local.cluster_ca_certificate
 }
 
-
-resource "kubernetes_deployment" "example" {
+resource "kubernetes_deployment" "deployment" {
   metadata {
-    name = "terraform-example"
+    name = "sonarqube"
     labels = {
       test = "MyExampleApp"
     }
   }
 
   spec {
-    replicas = 3
 
     selector {
       match_labels = {
-        test = "MyExampleApp"
+        test = "sonarqube"
       }
     }
 
     template {
       metadata {
         labels = {
-          test = "MyExampleApp"
+          test = "sonarqube"
         }
       }
 
       spec {
         container {
-          image = "nginx:1.21.6"
-          name  = "example"
+          image = "docker.io/sonarqube"
+          name  = "sonarqube"
 
           resources {
             limits = {
-              cpu    = "0.5"
-              memory = "512Mi"
+              cpu    = "1"
+              memory = "4Gi"
             }
             requests = {
               cpu    = "250m"
               memory = "50Mi"
             }
           }
+          port {
+            container_port = 9000
+            protocol = "TCP"
+          }
 
-          liveness_probe {
-            http_get {
-              path = "/"
-              port = 80
-
-              http_header {
-                name  = "X-Custom-Header"
-                value = "Awesome"
-              }
-            }
-
-            initial_delay_seconds = 3
-            period_seconds        = 3
+          env {
+            name  = "SONAR_JDBC_USERNAME"
+            value = "postgres"
+          }
+          env {
+            name  = "SONAR_JDBC_PASSWORD"
+            value = "mysecretpassword"
+          }
+          env {
+            name  = "SONAR_JDBC_URL"
+            value = "jdbc:postgresql://${jsondecode(data.azapi_resource.postgres.output).properties.latestRevisionFqdn}:5432/postgres"
           }
         }
+
       }
     }
   }
 }
 
-resource "kubernetes_service" "example" {
+
+resource "kubernetes_service" "k_service" {
   metadata {
-    name = "terraform-example"
+    name = "sonarqube"
   }
   spec {
     selector = {
-      test = "MyExampleApp"
+      test = "sonarqube"
     }
     port {
+      name = "port9000"
       port        = 80
-      target_port = 80
+      target_port = 9000
     }
-
     type = "LoadBalancer"
   }
 }
