@@ -6,12 +6,23 @@ resource "azurerm_kubernetes_cluster" "this" {
 
   default_node_pool {
     name       = "devpool12233"
-    node_count = 1
+    enable_auto_scaling = true
+    min_count = 1
+    max_count = 5
     vm_size    = "Standard_B2s"
+
+    linux_os_config {
+      sysctl_config {
+        fs_file_max = 131072
+        vm_max_map_count = 262144
+      }
+    }
   }
+
 
   linux_profile {
     admin_username = "azureuser"
+
 
     ssh_key {
       key_data = file("${var.ssh_key}")
@@ -27,6 +38,8 @@ resource "azurerm_kubernetes_cluster" "this" {
     Environment = "Dev"
   }
 }
+
+
 
 output "kube_config" {
   value = azurerm_kubernetes_cluster.this.kube_config_raw
