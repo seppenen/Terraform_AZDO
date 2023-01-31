@@ -173,7 +173,7 @@ data "azapi_resource" "postgres" {
   name                   = "postgres-container-app"
   parent_id              = azurerm_resource_group.this.id
   type                   = "Microsoft.App/containerApps@2022-06-01-preview"
-  response_export_values = ["properties.latestRevisionFqdn", "properties.policies.quarantinePolicy.status"]
+  response_export_values = ["properties.latestRevisionFqdn"]
 }
 
 #Print out postgres fqdn
