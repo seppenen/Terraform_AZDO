@@ -33,7 +33,7 @@ resource "azapi_resource" "env" {
   })
 }
 
-
+/*
 resource "azapi_resource" "temperature_container_app" {
   name      = "temperature-container-app"
   location  = var.az_location
@@ -67,6 +67,12 @@ resource "azapi_resource" "temperature_container_app" {
       template = {
         containers = [
           {
+            "image" : "docker.io/helloworld-http",
+            "name" : "helloworld",
+          }
+        ]
+        containers = [
+          {
             image = "${var.registry_host}/${var.az_container_name}:latest"
             name  = "microservice-temp-app",
             env : [
@@ -89,7 +95,7 @@ resource "azapi_resource" "temperature_container_app" {
   response_export_values  = ["properties.configuration.ingress"]
 }
 
-
+*/
 resource "azapi_resource" "postgres" {
   name      = "postgres-container-app"
   location  = var.az_location
@@ -140,10 +146,10 @@ resource "azapi_resource" "sonarqube" {
       managedEnvironmentId = azapi_resource.env.id
       configuration = {
         ingress = {
-          targetPort  = 9000
-          exposedPort = 9000
-          transport   = "tcp"
-          external    = true
+          targetPort    = 9000
+          transport     = "Auto"
+          external      = true
+          allowInsecure = true
         }
       },
       template = {
@@ -152,25 +158,11 @@ resource "azapi_resource" "sonarqube" {
             "image" : "docker.io/sonarqube:latest",
             "name" : "sonarqube",
             resources : {
-              "cpu" : 1,
-              "memory" : "2Gi"
+              "cpu" : 2,
+              "memory" : "4Gi"
             }
-            probes = [
-              {
-                "type" : "Liveness",
-                "initialDelaySeconds" : 15,
-                "periodSeconds" : 10,
-                "tcpSocket" : {
-                  "port" : 9000
-                }
-              }
-            ]
           }
         ]
-        scale = {
-          minReplicas = 2,
-          maxReplicas = 5,
-        }
       }
 
     }

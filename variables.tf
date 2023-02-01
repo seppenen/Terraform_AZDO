@@ -15,6 +15,7 @@ variable "ado_org_service_url" {
   default     = "https://dev.azure.com/aleksandrseppenen"
 }
 
+
 variable "ado_repo_password" {
   type        = string
   description = "Name of the repository in the format <GitHub Org>/<RepoName>"

@@ -8,6 +8,6 @@ variable "sq_admin_login_password" {
    description = "The password for the admin user"
 }
 
-variable sq_host {
+variable "sq_host" {
   description = "The hostname of the Sonarqube container instance"
 }

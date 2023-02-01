@@ -9,8 +9,15 @@ output "postgres_endpoint" {
 output "sonarqube_endpoint" {
   value = module.az-container-apps.sonarqube_endpoint
 }
-
+/*
 output "temperature_endpoint" {
   value = module.az-container-apps.temperature_endpoint
 }
+*/
 
+
+output "user_token" {
+  value     = module.sonarqube.user_token
+  sensitive = true
+
+}

@@ -40,10 +40,8 @@ module "az-environment" {
 }
 
 module "sonarqube" {
-  source  = "./modules/sonarqube"
-  sq_host = "sonarqube-container-app.livelycliff-9be60973.northeurope.azurecontainerapps.io"
+  source               = "./modules/sonarqube"
+  sq_host              = module.az-container-apps.sonarqube_endpoint
+
 }
 
-output "sq" {
-  value = module.az-container-apps.sonarqube_endpoint
-}
