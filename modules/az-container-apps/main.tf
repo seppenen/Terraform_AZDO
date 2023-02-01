@@ -2,10 +2,6 @@
 terraform {
   required_providers {
 
-    sonarqube = {
-      source = "jdamata/sonarqube"
-    }
-
     azapi = {
       source  = "azure/azapi"
       version = "1.2.0"
@@ -153,7 +149,7 @@ resource "azapi_resource" "sonarqube" {
       template = {
         containers = [
           {
-            "image" : "docker.io/sonarqube:8.9.10-community",
+            "image" : "docker.io/sonarqube:latest",
             "name" : "sonarqube",
             resources : {
               "cpu" : 1,

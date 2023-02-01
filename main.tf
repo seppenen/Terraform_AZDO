@@ -38,3 +38,12 @@ module "az-environment" {
   az_subnet_name         = local.az_subnet_name
   az_container_name      = local.az_container_name
 }
+
+module "sonarqube" {
+  source  = "./modules/sonarqube"
+  sq_host = "sonarqube-container-app.livelycliff-9be60973.northeurope.azurecontainerapps.io"
+}
+
+output "sq" {
+  value = module.az-container-apps.sonarqube_endpoint
+}
