@@ -67,12 +67,6 @@ resource "azapi_resource" "temperature_container_app" {
       template = {
         containers = [
           {
-            "image" : "docker.io/helloworld-http",
-            "name" : "helloworld",
-          }
-        ]
-        containers = [
-          {
             image = "${var.registry_host}/${var.az_container_name}:latest"
             name  = "microservice-temp-app",
             env : [
@@ -123,12 +117,13 @@ resource "azapi_resource" "postgres" {
                 "value" : "mysecretpassword"
               }
             ]
+            resources : {
+              "cpu" : 1,
+                "memory" : "2Gi"
+            }
+
           }
         ]
-        scale = {
-          minReplicas = 2,
-          maxReplicas = 5,
-        }
       }
     }
   })
@@ -155,12 +150,27 @@ resource "azapi_resource" "sonarqube" {
       template = {
         containers = [
           {
-            "image" : "docker.io/sonarqube:latest",
+            "image" : "septal/sonarqube:latest",
             "name" : "sonarqube",
+            "env" : [
+              {
+                "name" : "SONAR_JDBC_PASSWORD",
+                "value" : "mysecretpassword"
+              },
+              {
+                "name" : "SONAR_JDBC_URL",
+                "value" : "jdbc:postgresql://postgres-container-app.ashyflower-e9925327.northeurope.azurecontainerapps.io:5432/postgres"
+              },
+              {
+                "name" : "SONAR_JDBC_USERNAME",
+                "value" : "postgres"
+              },
+            ]
             resources : {
               "cpu" : 2,
               "memory" : "4Gi"
             }
+
           }
         ]
       }
